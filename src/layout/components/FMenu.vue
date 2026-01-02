@@ -1,33 +1,29 @@
 <script setup>
-const asideMenus = [
-  {
-    "name":"后台面板",
-    "icon":"help",
-    "child":[{
-      "name":"主控台",
-      "icon":"home-filled",
-      "frontpath":"/"
-    }]
-  },
-  {
-    "name":"商城管理",
-    "icon":"shopping-bag",
-    "child":[{
-      "name":"商品管理",
-      "icon":"shopping-cart-full",
-      "frontpath":"/goods/list"
-    }]
-  },
-]
-
+import {useRouter, useRoute} from "vue-router";
+import {useStore} from "vuex";
+import {computed, ref} from "vue";
+const store = useStore()
+const route = useRoute()
+const router = useRouter()
+// 是否折叠
+const isCollapse = computed(()=> !(store.state.asideWidth == '250px'))
+// 默认选中
+const defaultActive = ref(route.path)
+const asideMenus = computed(()=>store.state.menus)
+const handleSelect = (e)=>{
+  router.push(e)
+}
 </script>
 
 <template>
-  <div class="f-menu">
+  <div class="f-menu" :style="{width: $store.state.asideWidth}">
     <el-menu
-        default-active="2"
+        :default-active="defaultActive"
         class="border-0"
-        :collapse="false"
+        :collapse="isCollapse"
+        @select="handleSelect"
+        unique-opened
+        :collapse-transition="false"
     >
       <template v-for="(item, index) in asideMenus" :key="index">
         <el-sub-menu v-if="item.child && item.child.length>0" :index="item.name">
@@ -37,26 +33,20 @@ const asideMenus = [
             </el-icon>
             <span>{{item.name}}</span>
           </template>
-          <el-menu-item-group>
-            <template #title><span>Group One</span></template>
-            <el-menu-item index="1-1">item one</el-menu-item>
-            <el-menu-item index="1-2">item two</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="Group Two">
-            <el-menu-item index="1-3">item three</el-menu-item>
-          </el-menu-item-group>
-          <el-sub-menu index="1-4">
-            <template #title><span>item four</span></template>
-            <el-menu-item index="1-4-1">item one</el-menu-item>
-          </el-sub-menu>
+            <el-menu-item v-for="(item2, index2) in item.child" :key="index2" :index="item2.frontpath">
+              <el-icon>
+                <component :is="item2.icon"></component>
+              </el-icon>
+              <span>{{item2.name}}</span>
+            </el-menu-item>
         </el-sub-menu>
-        <el-menu-item index="2">
-          <el-icon><icon-menu /></el-icon>
-          <template #title>Navigator Two</template>
+        <el-menu-item v-else :index="item.frontpath">
+          <el-icon>
+            <component :is="item.icon"></component>
+          </el-icon>
+          <span>{{item.name}}</span>
         </el-menu-item>
       </template>
-
-
     </el-menu>
   </div>
 
@@ -64,12 +54,16 @@ const asideMenus = [
 
 <style scoped>
 .f-menu{
-  width: 250px;
+  transition: all 0.2s;
   top: 64px;
   bottom: 0;
   left: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   @apply shadow-md fixed bg-light-50;
+}
+.f-menu::-webkit-scrollbar{
+  width: 0px;
 }
 </style>

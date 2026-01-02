@@ -3,7 +3,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import {createStore} from "vuex";
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import router from './router'
+import {router} from './router'
 import App from './App.vue'
 // 导入windicss样式
 import 'virtual:windi.css'

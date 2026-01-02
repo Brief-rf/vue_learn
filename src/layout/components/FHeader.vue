@@ -33,13 +33,14 @@ function handleCommand(event){
 
 </script>
 <template>
-  <div class="flex bg-indigo-700 text-light-50 fixed top-0 left-0 right-0 h-[64px] items-center">
+  <div class="f-header">
     <span class="w-[250px] flex justify-center text-xl font-thin">
     <el-icon class="mr-1"><ElementPlus/></el-icon>
       若飞编程
     </span>
-    <el-icon class="flex justify-center w-[42px] h-[100%] icon-btn">
-      <Fold/>
+    <el-icon class="flex justify-center w-[42px] h-[100%] icon-btn" @click="$store.commit('handleAsideWidth')">
+      <Fold v-if="$store.state.asideWidth == '250px'"/>
+      <Expand v-else/>
     </el-icon>
     <el-tooltip
         effect="dark"
@@ -97,6 +98,9 @@ function handleCommand(event){
 </template>
 
 <style scoped>
+.f-header{
+  @apply flex bg-indigo-700 text-light-50 fixed top-0 left-0 right-0 h-[64px] items-center
+}
 .icon-btn {
   cursor: pointer;
 

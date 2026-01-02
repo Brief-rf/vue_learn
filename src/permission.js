@@ -1,10 +1,10 @@
-import router from '~/router/index.js'
+import {router,addRoutes} from '~/router/index.js'
 import {getToken} from "~/composables/auth.js";
 import {hideFullLoading, showFullLoading, toast} from "~/composables/util.js";
 import store from "~/store/index.js";
 
 // 全局前置守卫
-
+let hasGetInfo = false
 router.beforeEach(async (to, from, next)=>{
     // 显示loading
     showFullLoading()
@@ -20,12 +20,15 @@ router.beforeEach(async (to, from, next)=>{
         return next({path:from.path?from.path:"/"})
     }
     // 如果用户登录了，自动获取用户信息，存储在vuex中
-    if(token){
-        await store.dispatch('getinfo')
+    let hasNewRoutes = false
+    if(token && !hasGetInfo){
+        let {menus} = await store.dispatch('getinfo')
+        hasGetInfo = true
+        hasNewRoutes=addRoutes(menus)
     }
     let title = (to.meta.title ? to.meta.title: "") + " Brief后台管理"
     document.title = title
-    next()
+    hasNewRoutes?next(to.fullPath):next()
 })
 
 
