@@ -24,9 +24,6 @@ function handleCommand(event){
   if(event == "logout"){
     hangleLogout()
   } else if(event== 'rePassword'){
-    // drawer.value = true
-    console.log("修改密码")
-    // formDrawerRef.value.open()
     openRePasswordForm()
   }
 }
@@ -99,6 +96,8 @@ function handleCommand(event){
 
 <style scoped>
 .f-header{
+  height: 64px;
+  z-index: 1000;
   @apply flex bg-indigo-700 text-light-50 fixed top-0 left-0 right-0 h-[64px] items-center
 }
 .icon-btn {

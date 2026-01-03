@@ -29,7 +29,7 @@
             <div class="flex justify-between">
               <span class="text-sm"> {{item.title}}</span>
               <el-tag
-                  :type="item.unitColor"
+                  :type="item.unitColor?item.unitColor:'primary'"
                   effect="plain">
                 {{ item.unit }}
               </el-tag>
@@ -48,6 +48,11 @@
       </el-col>
     </el-row>
     <IndexNavs/>
+    <el-row :gutter="20" class="mt-5">
+      <el-col :span="12" :offset="0">
+        <IndexChart/>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -56,11 +61,11 @@ import {getStatistics1} from "~/api/index.js";
 import {ref} from "vue";
 import CountTo from "~/components/CountTo.vue";
 import IndexNavs from "~/components/IndexNavs.vue";
+import IndexChart from "~/components/IndexChart.vue";
 
 const panels = ref([])
 getStatistics1().then(res => {
   panels.value = res.panels
-  console.log(panels.value[0])
 })
 
 </script>

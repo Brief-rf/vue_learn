@@ -57,7 +57,7 @@ const store = createStore({
         updatepassword({commit}, {oldpassword, password, repassword}){
             return new Promise((resolve, reject)=> {
                 updatepassword(oldpassword, password, repassword).then(res=>{
-                    console.log(res)
+                    // console.log(res)
                     removeToken()
                     commit("SET_USERINFO", {})
                 }).catch(err=>{reject(err)})
