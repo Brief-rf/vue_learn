@@ -1,6 +1,28 @@
 <template>
   <div>
     <el-row :gutter="20">
+      <template v-if="panels.length==0">
+        <el-col :span="6" :offset="0" v-for="i in panels.length" :key="i">
+            <el-skeleton style="width: 100%;height: 100%;" animated loading>
+            <template #template>
+              <el-card shadow="hover" class="border-0">
+              <template #header>
+                <div class="flex justify-between">
+                  <el-skeleton-item variant="text" style="width: 25%;" />
+                  <el-skeleton-item variant="text" style="width: 12%" />
+                </div>
+              </template>
+              <el-skeleton-item variant="h1" style="width: 40%" />
+              <el-divider />
+              <div class="flex justify-between text-sm  text-gray-500">
+                <el-skeleton-item variant="text" style="width: 30%" />
+                <el-skeleton-item variant="text" style="width: 15%" />
+              </div>
+            </el-card>
+            </template>
+          </el-skeleton>
+        </el-col>
+      </template>
       <el-col :span="6" :offset="0" v-for="(item, index) in panels" :key="index">
         <el-card shadow="hover" class="border-0">
           <template #header>
@@ -14,7 +36,8 @@
             </div>
           </template>
           <span class="text-3xl font-bold text-gray-500">
-            {{ item.value }}
+            <!-- {{ item.value }} -->
+            <count-to :value="item.value" />
           </span>
           <el-divider />
           <div class="flex justify-between text-sm  text-gray-500">
@@ -24,12 +47,15 @@
         </el-card>
       </el-col>
     </el-row>
+    <IndexNavs/>
   </div>
 </template>
 
 <script setup>
 import {getStatistics1} from "~/api/index.js";
 import {ref} from "vue";
+import CountTo from "~/components/CountTo.vue";
+import IndexNavs from "~/components/IndexNavs.vue";
 
 const panels = ref([])
 getStatistics1().then(res => {
