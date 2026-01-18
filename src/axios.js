@@ -3,7 +3,7 @@ import {getToken} from "~/composables/auth.js";
 import {toast} from "~/composables/util.js";
 import store from "~/store/index.js";
 const service = axios.create({
-    baseURL: "/api"
+    baseURL: import.meta.env.VITE_APP_BASE_API
 })
 
 service.interceptors.request.use(function (config) {
