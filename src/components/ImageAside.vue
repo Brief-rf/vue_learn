@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {reactive, ref} from 'vue'
+import {reactive, ref, computed} from 'vue'
 import AsideList from '~/components/AsideList.vue';
-import {getImageClassList} from '~/api/image_class.js'
+import {getImageClassList, createImageClass, udpateImageClass} from '~/api/image_class.js'
 import FormDrawer from './FormDrawer.vue'
+import {toast} from '~/composables/util.js'
 const loading = ref(false)
 const list = ref([])
 const activeId = ref(0)
@@ -27,12 +28,23 @@ function getData(p=null){
     })
 }
 getData()
+const editId = ref(0)
+const drawerTitle = computed(()=>editId.value ? "修改" : "新增")
 const formDrawerRef = ref(null)
 const handleCreate = ()=>{
+    editId.value = 0
+    form.name = ""
+    form.order = 50
     formDrawerRef.value.open()
 }
-function ttt(e){
+function handleEdit(e){
+    editId.value = e.id
+    form.name = e.name
+    form.order = e.order
+    formDrawerRef.value.open()
     activeId.value = e.id
+    console.log(e);
+    
 }
 const form = reactive({
     name:"",
@@ -50,8 +62,15 @@ const formRef = ref(null)
 const handleSubmit = ()=>{
     formRef.value.validate((valid)=>{
         if(!valid) return
-        console.log("提交成功");
-        
+        formDrawerRef.value.showLoading()
+        const fun = editId.value ? udpateImageClass(editId.value, form) : createImageClass(form)
+        fun.then(res=>{
+            toast(drawerTitle.value+"成功")
+            getData(editId.value ? currentPage.value : 1)
+            formDrawerRef.value.close()
+        }).finally(()=>{
+            formDrawerRef.value.hideLoading()
+        })
     })
     
 }
@@ -63,7 +82,7 @@ defineExpose({
 <template>
     <el-aside width="220px" class="image-aside" v-loading="loading">
         <div class="top">
-            <AsideList @click="ttt(item)" :active="activeId == item.id" v-for="(item, index) in list" :key="index">
+            <AsideList @edit="handleEdit(item)" :active="activeId == item.id" v-for="(item, index) in list" :key="index">
                 {{ item.name }}
             </AsideList>
         </div>
@@ -72,7 +91,7 @@ defineExpose({
         </div>
 
     </el-aside>
-    <FormDrawer ref="formDrawerRef" @submit="handleSubmit" title="新增">
+    <FormDrawer ref="formDrawerRef" @submit="handleSubmit" :title="drawerTitle">
         <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false" >
             <el-form-item label="分类名称" prop="name">
                 <el-input v-model="form.name"></el-input>
