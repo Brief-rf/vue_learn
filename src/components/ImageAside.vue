@@ -4,9 +4,10 @@ import AsideList from '~/components/AsideList.vue';
 import {getImageClassList, createImageClass, udpateImageClass} from '~/api/image_class.js'
 import FormDrawer from './FormDrawer.vue'
 import {toast} from '~/composables/util.js'
+import { deleteImageCLass } from '../api/image_class';
 const loading = ref(false)
 const list = ref([])
-const activeId = ref(0)
+
 const currentPage = ref(1)
 const total = ref(0)
 const limit = ref(10)
@@ -16,12 +17,11 @@ function getData(p=null){
     }
     loading.value = true
     getImageClassList(currentPage.value, limit.value).then(res=>{
-        console.log(res);
         total.value = res.totalCount
         list.value = res.list
         let item = list.value[0]
         if(item){
-            activeId.value = item.id
+            handleChangeActiveId(item.id)
         }
     }).finally(()=>{
         loading.value = false
@@ -45,6 +45,17 @@ function handleEdit(e){
     activeId.value = e.id
     console.log(e);
     
+}
+const handleDelete = (item) => {
+    console.log('删除ID', item);
+    
+    deleteImageCLass(item).then(res=>{
+        loading.value = true
+        toast("删除成功")
+        getData()
+    }).finally(()=>{
+        loading.value = false
+    })
 }
 const form = reactive({
     name:"",
@@ -74,6 +85,14 @@ const handleSubmit = ()=>{
     })
     
 }
+
+// 选中图库分类id
+ const activeId = ref(0)
+const emit = defineEmits(["change"])
+function handleChangeActiveId(id){
+    activeId.value = id
+    emit("change", id)
+}
 defineExpose({
     handleCreate
 })
@@ -82,7 +101,7 @@ defineExpose({
 <template>
     <el-aside width="220px" class="image-aside" v-loading="loading">
         <div class="top">
-            <AsideList @edit="handleEdit(item)" :active="activeId == item.id" v-for="(item, index) in list" :key="index">
+            <AsideList @click="handleChangeActiveId(item.id)" @edit="handleEdit(item)" @delete="handleDelete(item.id)"  :active="activeId == item.id" v-for="(item, index) in list" :key="index">
                 {{ item.name }}
             </AsideList>
         </div>

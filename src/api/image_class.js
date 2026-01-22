@@ -12,3 +12,8 @@ export function createImageClass(data){
 export function udpateImageClass(id, data){
     return axios.post("/admin/image_class/"+id, data)
 }
+
+export function deleteImageCLass(id){
+    // return axios.post("/admin/image_class/"+id+"/delete")
+    return axios.post(`/admin/image_class/${id}/delete`)
+}
