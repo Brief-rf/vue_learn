@@ -4,7 +4,7 @@ import AsideList from '~/components/AsideList.vue';
 import {getImageClassList, createImageClass, udpateImageClass} from '~/api/image_class.js'
 import FormDrawer from './FormDrawer.vue'
 import {toast} from '~/composables/util.js'
-import { deleteImageCLass } from '../api/image_class';
+import { deleteImageCLass } from '~/api/image_class';
 const loading = ref(false)
 const list = ref([])
 
@@ -43,12 +43,10 @@ function handleEdit(e){
     form.order = e.order
     formDrawerRef.value.open()
     activeId.value = e.id
-    console.log(e);
-    
+
 }
 const handleDelete = (item) => {
-    console.log('删除ID', item);
-    
+
     deleteImageCLass(item).then(res=>{
         loading.value = true
         toast("删除成功")
