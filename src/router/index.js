@@ -11,6 +11,7 @@ import ImageList from '~/pages/image/list.vue'
 import NoticeList from '~/pages/notice/list.vue'
 import SettingBase from '~/pages/setting/base.vue'
 import CouponList from '~/pages/coupon/list.vue'
+import ManagerList from '~/pages/manager/list.vue'
 
 import NotFound from '~/pages/404.vue'
 import Admin from "~/layout/admin.vue"
@@ -59,6 +60,14 @@ const asyncRoutes = [
         component: GoodList,
         meta: {
             title: "商品管理"
+        }
+    },
+    {
+        path: "/manager/list",
+        name: "/manager/list",
+        component: ManagerList,
+        meta: {
+            title: "管理员管理"
         }
     },
     {
@@ -149,6 +158,6 @@ export function addRoutes(menus){
         })
     }
     findAndAddRoutesByMenus(menus)
-    // console.log(router.getRoutes())
+    console.log(router.getRoutes())
     return hasNewRoutes
 }
