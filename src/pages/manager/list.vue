@@ -34,7 +34,7 @@
       <el-table-column label="管理员" width="200">
         <template #default="{row}">
           <div class="flex items-center">
-            <el-avatar :size="40" src="row.avatar">
+            <el-avatar :size="40" :src="row.avatar">
               <img
                   src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
               />
@@ -85,7 +85,7 @@
           <el-input v-model="form.password" placeholder="密码" ></el-input>
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
-          <el-input v-model="form.avatar" placeholder="头像" ></el-input>
+          <ChooseImage v-model="form.avatar"/>
         </el-form-item>
         <el-form-item label="所属角色" prop="role_id">
           <el-select v-model="form.role_id" placeholder="选择所属角色">
@@ -110,41 +110,33 @@
 import {createManager, deleteManager, getManagerList, updateManager, updateManagerStatus} from "~/api/manager.js";
 import {computed, reactive, ref} from "vue";
 import FormDrawer from "~/components/FormDrawer.vue";
+import ChooseImage from "~/components/ChooseImage.vue";
 import {toast} from "~/composables/util.js";
-const searchForm = reactive({
-  keyword: ""
-})
-const resetSearchForm = ()=>{
-  searchForm.keyword = ""
-  getData()
-}
-const tableData = ref([])
-const loading = ref(false)
-// 分页
-const currentPage = ref(1)
-const total = ref(0)
-const limit = ref(10)
+import { useInitTable } from "../../composables/useCommon";
 const roles = ref([])
 
-
-function getData(p = null){
-  if (typeof p == "number"){
-    currentPage.value = p
-  }
-  loading.value = true
-
-  getManagerList(currentPage.value, searchForm).then(res=>{
-    total.value = res.totalCount
-    tableData.value = res.list.map(o=>{
-      o.statusLoading = false
-      return o
-    })
-    roles.value = res.roles
-  }).finally(()=>{
-    loading.value = false
-  })
-}
-getData()
+const {searchForm,
+        resetSearchForm,
+        tableData,
+        loading,
+        currentPage,
+        total,
+        limit,
+        getData} = useInitTable({
+          searchForm:{
+            keyword: ""
+          },
+          getList:getManagerList,
+          onGetListSuccess:(res)=>{
+            total.value = res.totalCount
+            tableData.value = res.list.map(o => {
+                o.statusLoading = false
+                return o
+            })
+            roles.value = res.roles
+            
+          }
+        })
 const editId = ref(0)
 const drawerTitle = computed(()=>editId.value ? "修改" : "新增")
 
@@ -160,7 +152,7 @@ const handleDelete =  (id)=>{
 
 
 }
-getData()
+// getData()
 const formDrawerRef = ref(null)
 const formRef = ref(null)
 const form = reactive({
